@@ -1,4 +1,4 @@
-#!python 3.3
+#!python3.3
 
 import sys
 
