@@ -3,8 +3,14 @@
 import sys
 from twitter import OAuth, Twitter
 
+while len(sys.argv) != 3 :
+    print("Recuerda que debes escribir python3 tuiterbotonazo.py TuUsuario TuEmail")
+    exit()
+  #Validation
+
 with open("tokens.cfg") as fh:
     cfg = dict(x.split() for x in fh)
+
   # Getting the tokens on the file "tokens.cfg"
 
 twitter = Twitter(auth=OAuth(
@@ -14,6 +20,7 @@ twitter = Twitter(auth=OAuth(
     cfg['consumer_secret']))  # Getting the authentication requiered by Twitter
 
 username = sys.argv[1]  # Saving username
+
 
 print("Usuario: " + sys.argv[1])
 print("Email: " + sys.argv[2])
