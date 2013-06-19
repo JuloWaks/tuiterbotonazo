@@ -3,7 +3,7 @@
 import sys
 from twitter import OAuth, Twitter
 
-while len(sys.argv) != 3 :
+while len(sys.argv) != 3:
     print("Recuerda que debes escribir python3 tuiterbotonazo.py TuUsuario TuEmail")
     exit()
   #Validation
@@ -26,5 +26,10 @@ print("Usuario: " + sys.argv[1])
 print("Email: " + sys.argv[2])
 
 f = twitter.followers.ids(screen_name=username)  # Getting user followers ids
+ids = f["ids"]
 
-print("Hola %s , tenes %s seguidores" % (username, len(f["ids"])))
+while f["next_cursor"] != 0:
+    f = twitter.followers.ids(screen_name=username, cursor=f['next_cursor'])
+    ids.extend(f["ids"])  #If the user have more than 5000 followers
+    
+print("Hola %s , tenes %s seguidores" % (username, len(ids)))
