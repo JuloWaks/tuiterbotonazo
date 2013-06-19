@@ -1,10 +1,15 @@
-#!python3.3
-
+#!/usr/bin/env python3
 import sys
-import urllib.request
-
+import os
+from twitter import OAuth,Twitter
+with open("tokens.cfg") as fh:
+   cfg = dict(x.split() for x in fh)
+print(cfg)
+twitter = Twitter(auth=OAuth(cfg['access_token'], cfg['access_token_secret'],cfg['consumer_key'],cfg['consumer_secret']))
+Usuario = sys.argv[1]
 print("Usuario: " + sys.argv[1])
 print("Email: " + sys.argv[2])
-f = urllib.request.urlopen("http://api.twitter.com/1/users/show.json?screen_name=eljulo")
-f.read()
-print(list(r.headers.items()))
+f = twitter.followers.ids(screen_name= sys.argv[1])
+print("Hola %s , tenes %s seguidores" % (Usuario, len(f["ids"])))
+
+
