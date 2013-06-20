@@ -2,6 +2,7 @@
 
 import sys
 from twitter import OAuth, Twitter
+from os import path
 
 while len(sys.argv) != 3:
     print("Recuerda que debes escribir python3 tuiterbotonazo.py TuUsuario TuEmail")
@@ -19,21 +20,27 @@ twitter = Twitter(auth=OAuth(
     cfg['consumer_key'],
     cfg['consumer_secret']))  # Getting the authentication requiered by Twitter
 
-username = sys.argv[1].lower()  # Saving username
+username, email = sys.argv[1].lower(), sys.argv[2].lower()  # Saving username
 
 
-print("Usuario: " + sys.argv[1])
-print("Email: " + sys.argv[2])
+print("Usuario: %s" % username)
+print("Email: %s" % email)
+if path.isfile("%s.flwrs" % username):    
+    with open("%s.flwrs" % username) as slist:
+        ids = list(idd.strip() for idd in slist)        
+else:
+    f = twitter.followers.ids(screen_name=username)  
+# Getting user followers ids
+    ids = f["ids"]
 
-f = twitter.followers.ids(screen_name=username)  # Getting user followers ids
-ids = f["ids"]
+    while f["next_cursor"] != 0:
+        f = twitter.followers.ids(screen_name=username,
+                                 cursor=f['next_cursor'])
+        ids.extend(f["ids"])  # If the user have more than 5000 followers
 
-while f["next_cursor"] != 0:
-    f = twitter.followers.ids(screen_name=username, cursor=f['next_cursor'])
-    ids.extend(f["ids"])  # If the user have more than 5000 followers
-
-with open("%s.flwrs" % username, "w") as slist: # Saving the list of followers for further comparing
-    for idd in ids:
-        slist.write("%s\n" % idd)
+    with open("%s.flwrs" % username, "w") as slist: 
+# Saving the list of followers for further comparing
+        for idd in ids:
+            slist.write("%s\n" % idd)
 
 print("Hola %s , tenes %s seguidores" % (username, len(ids)))
